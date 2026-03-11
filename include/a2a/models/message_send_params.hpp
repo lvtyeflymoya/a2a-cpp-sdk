@@ -2,6 +2,7 @@
 
 #include "agent_message.hpp"
 #include <optional>
+#include <map>
 
 namespace a2a {
 
@@ -11,39 +12,33 @@ namespace a2a {
 class MessageSendParams {
 public:
     MessageSendParams() = default;
-    
+
     explicit MessageSendParams(const AgentMessage& message)
         : message_(message) {}
-    
+
     // Getters
     const AgentMessage& message() const { return message_; }
     const std::optional<int>& history_length() const { return history_length_; }
     const std::optional<std::string>& context_id() const { return context_id_; }
-    const std::optional<std::string>& task_id() const { return task_id_; }
-    
+    const std::optional<std::string>& task_id() const {return task_id_; }
+
     // Setters
-    void set_message(const AgentMessage& message) { message_ = message; }
+    void set_message(const AgentMessage& message) { message_ = message;}
     void set_history_length(int length) { history_length_ = length; }
     void set_context_id(const std::string& id) { context_id_ = id; }
     void set_task_id(const std::string& id) { task_id_ = id; }
-    
-    /**
-     * @brief Serialize to JSON
-     */
+
+    // Serialize to json
     std::string to_json() const;
-    
-    /**
-     * @brief Deserialize from JSON
-     */
+
+    // Deserilize from json
     static MessageSendParams from_json(const std::string& json);
-    
+
     /**
      * @brief Create a new MessageSendParams
      */
-    static MessageSendParams create() {
-        return MessageSendParams();
-    }
-    
+    static MessageSendParams create() { return MessageSendParams(); }
+
     /**
      * @brief Fluent API methods
      */
@@ -51,18 +46,21 @@ public:
         message_ = message;
         return *this;
     }
-    
-    MessageSendParams& with_history_length(int length) {
+
+    MessageSendParams &with_history_length(int length)
+    {
         history_length_ = length;
         return *this;
     }
-    
-    MessageSendParams& with_context_id(const std::string& id) {
+
+    MessageSendParams &with_context_id(const std::string &id)
+    {
         context_id_ = id;
         return *this;
     }
-    
-    MessageSendParams& with_task_id(const std::string& id) {
+
+    MessageSendParams &with_task_id(const std::string &id)
+    {
         task_id_ = id;
         return *this;
     }
@@ -77,11 +75,12 @@ private:
 /**
  * @brief Parameters for querying a task
  */
-struct TaskQueryParams {
+struct TaskQueryParams 
+{
     std::string id;
     std::optional<int> history_length;
     std::map<std::string, std::string> metadata;
-    
+
     std::string to_json() const;
     static TaskQueryParams from_json(const std::string& json);
 };
@@ -89,11 +88,12 @@ struct TaskQueryParams {
 /**
  * @brief Parameters for task ID operations
  */
-struct TaskIdParams {
+struct TaskIdParams
+{
     std::string id;
-    
+
     std::string to_json() const;
-    static TaskIdParams from_json(const std::string& json);
+    static TaskIdParams from_json(const std::string &json);
 };
 
-} // namespace a2a
+}   // namespace a2a

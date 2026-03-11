@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.15)
-project(a2a-cpp VERSION 1.0.0 LANGUAGES CXX)
+project(a2a-excise VERSION 1.0.0 LANGUAGES CXX)
 
 # C++ Standard
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_EXTENTIONS OFF)
 
 # Options
 option(BUILD_EXAMPLES "Build example applications" ON)
@@ -47,7 +47,7 @@ set(A2A_SOURCES
 
 # Header files
 set(A2A_HEADERS
-    # Core
+   # Core
     include/a2a/core/types.hpp
     include/a2a/core/error_code.hpp
     include/a2a/core/exception.hpp
@@ -79,7 +79,11 @@ set(A2A_HEADERS
 # Create library
 add_library(a2a ${A2A_SOURCES} ${A2A_HEADERS})
 
-target_include_directories(a2a
+# 这里使用了生成器表达式， 用于在构建和安装的不同阶段动态的生成路径或配置
+# 构建时：头文件路径是${CMAKE_CURRENT_SOURCE_DIR}/include文件夹
+# 安装时：头文件路径是安装到系统中的include目录，相对于CMAKE_INSTALL_PREFIX
+# 这种方法可以保证项目在开发和安装后都能找到正确的头文件，避免路径问题
+target_link_directories(a2a
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>
@@ -93,11 +97,11 @@ target_link_libraries(a2a
         Threads::Threads
 )
 
-# Compiler warnings
+# Compiler warning
 if(MSVC)
-    target_compile_options(a2a PRIVATE /W4)
+    target_link_options(a2a PRIVATE /w4)
 else()
-    target_compile_options(a2a PRIVATE -Wall -Wextra -Wpedantic)
+    target_link_options(a2a PRIVATE -Wall -Wextra -Wpedantic)
 endif()
 
 # Examples
@@ -113,19 +117,21 @@ if(BUILD_TESTS)
 endif()
 
 # Installation
+# 这里没有设置CMAKE_INSTALL_PREFIX路径，因此会采用它的默认值，即系统路径usr/local/
+# 
 install(TARGETS a2a
-    EXPORT a2a-targets
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib
-    RUNTIME DESTINATION bin
+    EXPORT a2a-targets          # 将目标a2a的安装信息导出到a2a-targets中，用于生成CMake配置文件
+    LIBRARY DESTINATION lib     # 如果目标是共享库（SHARED），将其安装到 lib 目录。
+    ARCHIVE DESTINATION lib     # 如果目标是静态库（STATIC），将其安装到 lib 目录。
+    RUNTIME DESTINATION bin     # 如果目标是可执行文件（EXECUTABLE），将其安装到 bin 目录。
 )
 
-install(DIRECTORY include/a2a
-    DESTINATION include
+install(DIRECTORY include/a2a   # 指定要安装的头文件目录是include/a2a
+    DESTINATION include         # 安装到目标系统的include文件夹下，相对于CMAKE_INSTALL_PREFIX
 )
 
-install(EXPORT a2a-targets
-    FILE a2a-config.cmake
-    NAMESPACE a2a::
-    DESTINATION lib/cmake/a2a
+install(EXPORT a2a-targets      # 安装导出文件
+    FILE a2a-config.cmake       # 生成的配置文件名称
+    NAMESPACE a2a::             # 为导出的目标添加命名空间前缀
+    DESTINATION lib/cmake/a2a   # 安装到目标系统的lib/cmake/a2a文件夹下，相对于CMAKE_INSTALL_PREFIX
 )
