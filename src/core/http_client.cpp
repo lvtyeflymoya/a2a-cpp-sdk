@@ -134,7 +134,8 @@ HttpResponse HttpClient::post(const std::string &url,
 
     CURLcode res = curl_easy_perform(curl);
 
-    if (res = CURLE_OK) {
+    if (res != CURLE_OK)
+    {
         curl_slist_free_all(header_list);
         curl_easy_cleanup(curl);
         throw A2AException(

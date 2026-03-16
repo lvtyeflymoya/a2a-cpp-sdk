@@ -101,7 +101,7 @@ private:
         // 解析 HTTP 请求
         std::istringstream request_stream(request);
         std::string method, path, version;
-        request_stream >> method >> path >> version;
+        request_stream >> method >> path >> version;    // 按空白字符分割，依次读取请求行的三个字段
 
         // 提取请求体
         std::string body;

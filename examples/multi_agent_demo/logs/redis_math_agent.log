@@ -4,3 +4,20 @@
 [Math Agent] 初始化完成（使用 Redis TaskStore）
 [Math Agent] 启动在端口 5001
 Http Server listening on port: 5001
+[Math Agent] 收到查询: 1+1
+[Math Agent] 请求历史长度: 10
+[RedisTaskStore] 获取历史消息: ctx-redis-test-1773629760(数量：1)
+[Math Agent] 从 Redis TaskStore 获取到 1 条历史消息
+[Math Agent] 包含历史的查询长度: 46 字节
+[Math Agent] 收到查询: 上面答案+1
+[Math Agent] 请求历史长度: 10
+[RedisTaskStore] 获取历史消息: ctx-redis-test-1773629760(数量：3)
+[Math Agent] 从 Redis TaskStore 获取到 3 条历史消息
+[Math Agent] 包含历史的查询长度: 98 字节
+[Math Agent] 收到查询: 再+1
+[Math Agent] 请求历史长度: 10
+[RedisTaskStore] 获取历史消息: ctx-redis-test-1773629760(数量：5)
+[Math Agent] 从 Redis TaskStore 获取到 5 条历史消息
+[Math Agent] 包含历史的查询长度: 156 字节
+
+[Math Agent] 收到信号 15，正在关闭...

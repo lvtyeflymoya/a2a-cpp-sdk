@@ -41,7 +41,7 @@ public:
         // 构造请求json
         json request_body = {
             {"model", model_},
-            {"input", {{"message", json::array({{{"role", "system"}, {"content", system_prompt}}, {{"role", "user"}, {"content", user_message}}})}}},
+            {"input", {{"messages", json::array({{{"role", "system"}, {"content", system_prompt}}, {{"role", "user"}, {"content", user_message}}})}}},
             {"parameters", {{"result_format", "message"}}}};
 
         std::string request_string = request_body.dump();

@@ -20,7 +20,7 @@ std::string AgentMessage::to_json() const {
     }
 
     // Part array
-    oss << ",\"part\":[";
+    oss << ",\"parts\":[";
     for (size_t i = 0; i < parts_.size(); i++) {
         if (i > 0) oss << ",";
         oss << parts_[i]->to_json();

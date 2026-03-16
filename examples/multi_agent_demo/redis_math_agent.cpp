@@ -138,6 +138,7 @@ private:
         }
         catch (const std::exception &e)
         {
+            std::cerr << "错误：" << e.what() << std::endl;
             auto error_reply = AgentMessage::create()
                                    .with_role(MessageRole::Agent)
                                    .with_text("抱歉，处理数学问题时出错");

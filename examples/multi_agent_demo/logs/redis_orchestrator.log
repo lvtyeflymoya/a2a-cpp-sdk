@@ -3,3 +3,28 @@
 [Main] 创建 Redis TaskStore: 127.0.0.1:6379
 [Orchestrator] 启动在端口 5000
 Http Server listening on port: 5000
+[Orchestrator] 收到用户查询: 1+1
+[RedisTaskStore] 保存任务: ctx-redis-test-1773629760
+[Orchestrator] 创建新 Task: ctx-redis-test-1773629760
+[RedisTaskStore] 添加历史消息到: ctx-redis-test-1773629760 (角色: User)
+[Orchestrator] 保存消息到 Redis TaskStore
+[Orchetrator] 识别意图：math
+[Orchestrator] 调用 Math Agent (history_length=10)
+[RedisTaskStore] 添加历史消息到: ctx-redis-test-1773629760 (角色: Agent)
+[Orchestrator] 保存消息到 Redis TaskStore
+[Orchestrator] 收到用户查询: 上面答案+1
+[RedisTaskStore] 添加历史消息到: ctx-redis-test-1773629760 (角色: User)
+[Orchestrator] 保存消息到 Redis TaskStore
+[Orchetrator] 识别意图：math
+[Orchestrator] 调用 Math Agent (history_length=10)
+[RedisTaskStore] 添加历史消息到: ctx-redis-test-1773629760 (角色: Agent)
+[Orchestrator] 保存消息到 Redis TaskStore
+[Orchestrator] 收到用户查询: 再+1
+[RedisTaskStore] 添加历史消息到: ctx-redis-test-1773629760 (角色: User)
+[Orchestrator] 保存消息到 Redis TaskStore
+[Orchetrator] 识别意图：math
+[Orchestrator] 调用 Math Agent (history_length=10)
+[RedisTaskStore] 添加历史消息到: ctx-redis-test-1773629760 (角色: Agent)
+[Orchestrator] 保存消息到 Redis TaskStore
+
+[Orchestrator] 收到信号 15，正在关闭...

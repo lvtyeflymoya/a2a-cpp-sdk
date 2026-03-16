@@ -54,6 +54,8 @@ JsonRpcRequest JsonRpcRequest::from_json(const std::string& json_str) {
         if (j.contains("params")) {
             request.params_json_ = j["params"].dump();
         }
+
+        return request;
     }
     catch (const json::exception& e) {
         throw A2AException(
