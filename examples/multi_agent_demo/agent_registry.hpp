@@ -21,7 +21,7 @@ struct AgentRegistration {
     std::chrono::system_clock::time_point last_heartbeat;   // 最后心跳时间
     json agent_card;
 
-    std::string to_json() const {
+    json to_json() const {
         json j = {
             {"id", id},
             {"name", name},
@@ -106,7 +106,7 @@ public:
     }
 
     // 根据标签查找agent
-    std::vector<AgentRegistration> find_agent_by_tag(const std::string& tag) {
+    std::vector<AgentRegistration> find_agents_by_tag(const std::string& tag) {
         std::lock_guard<std::mutex> lock(mutex_);
 
         std::vector<AgentRegistration> result;
@@ -140,7 +140,7 @@ public:
     }
 
     // 健康检查，移除超时的agent
-    void check_heartbeat() {
+    void check_health() {
         std::lock_guard<std::mutex> lock(mutex_);
 
         auto now = std::chrono::system_clock::now();
