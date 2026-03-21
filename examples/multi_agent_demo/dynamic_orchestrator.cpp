@@ -21,17 +21,20 @@ using namespace a2a;
 using json = nlohmann::json;
 
 // 简单的http客户端
-class SimpleHttpClient {
+class SimpleHttpClient
+{
 public:
-    static std::string post (const std::string& url, const std::string& body) {
-        CURL* curl = curl_easy_init();
-        if (!curl) return "";
+    static std::string post(const std::string &url, const std::string &body)
+    {
+        CURL *curl = curl_easy_init();
+        if (!curl)
+            return "";
 
         std::string response;
         curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
         curl_easy_setopt(curl, CURLOPT_POSTFIELDS, body.c_str());
 
-        struct curl_slist* headers = nullptr;
+        struct curl_slist *headers = nullptr;
         headers = curl_slist_append(headers, "Content-Type: application/json");
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
@@ -65,14 +68,14 @@ public:
         std::cout << "[Orchestrator] 初始化完成" << std::endl;
     }
 
-    void start(int port) {
+    void start(int port)
+    {
         // 启动HTTP服务器
         HttpServer server(port);
 
         // A2A协议端点
-        server.register_handler("/", [this](const std::string& body) {
-            return this->handle_request(body);
-        });
+        server.register_handler("/", [this](const std::string &body)
+                                { return this->handle_request(body); });
 
         // Agent Card 端点 (A2A 协议标准)
         server.register_handler("/.well-known/agent-card.json", [this](const std::string &body)
@@ -94,10 +97,12 @@ public:
         registration.address = listen_address_;
         registration.tags = {"orchestrator", "coordinator"};
 
-        if (registry_client_.register_agent(registration)) {
+        if (registry_client_.register_agent(registration))
+        {
             std::cout << "[Orchestrator] 已注册到服务中心" << std::endl;
         }
-        else {
+        else
+        {
             std::cerr << "[Orchestrator] 注册失败" << std::endl;
         }
 
@@ -105,20 +110,25 @@ public:
     }
 
 private:
-    std::string handle_request(const std::string& body) {
-        try {
+    std::string handle_request(const std::string &body)
+    {
+        try
+        {
             auto request_json = json::parse(body);
             auto request = JsonRpcRequest::from_json(body);
 
-            if (request.method() == "message/send") {
+            if (request.method() == "message/send")
+            {
                 auto params_json = request_json["params"];
                 auto message = AgentMessage::from_json(params_json["message"].dump());
 
                 // 获取文本内容
                 std::string user_text;
-                if (!message.parts().empty()) {
-                    auto text_part = dynamic_cast<TextPart*>(message.parts()[0].get());
-                    if (text_part) {
+                if (!message.parts().empty())
+                {
+                    auto text_part = dynamic_cast<TextPart *>(message.parts()[0].get());
+                    if (text_part)
+                    {
                         user_text = text_part->text();
                     }
                 }
@@ -135,11 +145,13 @@ private:
                 std::cout << "[Orchestrator] 识别意图: " << intent << std::endl;
 
                 std::string response_text;
-                if (intent == "math") {
+                if (intent == "math")
+                {
                     // 动态查找 Math Agent
                     response_text = call_math_agent(user_text, context_id);
                 }
-                else {
+                else
+                {
                     // 通用对话
                     response_text = handle_general_query(user_text, context_id);
                 }
@@ -163,21 +175,26 @@ private:
         }
     }
 
-    std::string  analyze_intent(const std::string& text) {
+    std::string analyze_intent(const std::string &text)
+    {
         std::string prompt = "判断以下用户输入属于哪个类别，只回答类别名称： \n"
-                            "- math: 数学计算、方程求解\n"
-                            "- general: 其他对话\n\n"
-                            "用户输入：" + text;
+                             "- math: 数学计算、方程求解\n"
+                             "- general: 其他对话\n\n"
+                             "用户输入：" +
+                             text;
 
         std::string result = qwen_client_.chat("", prompt);
-        if (result.find("math") != std::string::npos) {
+        if (result.find("math") != std::string::npos)
+        {
             return "math";
         }
         return "general";
     }
 
-    std::string call_math_agent(const std::string& query, const std::string& context_id) {
-        try {
+    std::string call_math_agent(const std::string &query, const std::string &context_id)
+    {
+        try
+        {
             // 从注册中心查找 math agent
             std::string math_agent_url = registry_client_.select_agent_by_tag("math");
 
@@ -188,15 +205,7 @@ private:
                 {"jsonrpc", "2.0"},
                 {"id", "1"},
                 {"method", "message/send"},
-                {"params",{
-                    {"message", {
-                        {"role", "user"},
-                        {"contextId", context_id},
-                        {"parts", {{{"kind", "text"}, {"text", query}}}}
-                    }},
-                    {"historyLength", 5}
-                }}
-            };
+                {"params", {{"message", {{"role", "user"}, {"contextId", context_id}, {"parts", {{{"kind", "text"}, {"text", query}}}}}}, {"historyLength", 5}}}};
 
             // 发送请求
             std::string response_body = SimpleHttpClient::post(math_agent_url, request.dump());
@@ -209,7 +218,7 @@ private:
                 return response_json["result"]["parts"][0]["text"].get<std::string>();
             }
 
-            return  "无法解析响应";
+            return "无法解析响应";
         }
         catch (const std::exception &e)
         {
@@ -218,15 +227,19 @@ private:
         }
     }
 
-    std::string handle_general_query(const std::string& query, const std::string& context_id) {
+    std::string handle_general_query(const std::string &query, const std::string &context_id)
+    {
         auto history = task_store_->get_history(context_id, 5);
         std::string history_text;
-        for (const auto& msg : history) {
+        for (const auto &msg : history)
+        {
             std::string role_str = to_string(msg.role());
             std::string text;
-            if (!msg.parts().empty()) {
-                auto text_part = dynamic_cast<TextPart*>(msg.parts()[0].get());
-                if (text_part) {
+            if (!msg.parts().empty())
+            {
+                auto text_part = dynamic_cast<TextPart *>(msg.parts()[0].get());
+                if (text_part)
+                {
                     text = text_part->text();
                 }
             }
@@ -236,8 +249,10 @@ private:
         return qwen_client_.chat(history_text, query);
     }
 
-    void save_message(const std::string& context_id, const AgentMessage& message) {
-        if (!task_store_->task_exists(context_id)) {
+    void save_message(const std::string &context_id, const AgentMessage &message)
+    {
+        if (!task_store_->task_exists(context_id))
+        {
             auto task = AgentTask::create()
                             .with_context_id(context_id)
                             .with_id(context_id)
@@ -273,8 +288,10 @@ private:
     RegistryClient registry_client_;
 };
 
-int main(int argc, char* argv[]) {
-    if (argc < 4) {
+int main(int argc, char *argv[])
+{
+    if (argc < 4)
+    {
         std::cerr << "用法: " << argv[0] << " <agent_id> <port> <registry_url> [redis_host] [redis_port]" << std::endl;
         std::cerr << "示例: " << argv[0] << " orch-1 5000 http://localhost:8500 127.0.0.1 6379" << std::endl;
         return 1;
