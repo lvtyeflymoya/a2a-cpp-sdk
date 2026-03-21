@@ -42,10 +42,49 @@ target_link_libraries(redis_math_agent
     pthread
 )
 
+# 交互式客户端
+add_executable(interactive_client interactive_client.cpp)
+target_link_libraries(interactive_client 
+    CURL::libcurl
+    pthread
+)
+
+# 注册中心服务器
+add_executable(registry_server registry_server.cpp)
+target_link_libraries(registry_server 
+    a2a
+    CURL::libcurl
+    pthread
+)
+
+# 动态服务发现 Orchestrator
+add_executable(dynamic_orchestrator dynamic_orchestrator.cpp)
+target_link_libraries(dynamic_orchestrator 
+    a2a
+    redis_task_store
+    CURL::libcurl
+    hiredis
+    pthread
+)
+
+# 动态服务发现 Math Agent
+add_executable(dynamic_math_agent dynamic_math_agent.cpp)
+target_link_libraries(dynamic_math_agent 
+    a2a
+    redis_task_store
+    CURL::libcurl
+    hiredis
+    pthread
+)
+
 # 安装
 install(TARGETS 
     redis_orchestrator
     redis_math_agent
+    interactive_client
+    registry_server
+    dynamic_orchestrator
+    dynamic_math_agent
     DESTINATION bin
 )
 
